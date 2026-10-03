@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6f7fb">
+<title>CampusFlow — Task Manager</title>
+<style>
+:root{
+ --bg:#f6f7fb;--surface:#fff;--surface2:#f0f2f7;--text:#172033;--muted:#7b8496;
+ --line:#e7e9ef;--accent:#5b5ce2;--accent2:#7c3aed;--green:#0f9f6e;--red:#e34d59;--orange:#e19a28;
+ --shadow:0 12px 35px rgba(30,38,65,.07);--radius:20px
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;display:flex}.sidebar{position:fixed;left:0;top:0;bottom:0;width:250px;background:#171827;color:#fff;padding:26px 18px;z-index:5}
+.logo{font-size:22px;font-weight:850;letter-spacing:-.5px;margin:0 8px 35px}.logo b{color:#9b9cfb}.nav{display:grid;gap:6px}.nav button{border:0;background:transparent;color:#aeb3c6;text-align:left;padding:13px 14px;border-radius:12px}.nav button.active,.nav button:hover{background:#292a40;color:#fff}.side-note{position:absolute;bottom:25px;left:18px;right:18px;background:#222337;padding:14px;border-radius:14px;color:#aeb3c6;font-size:12px;line-height:1.5}
+main{margin-left:250px;width:calc(100% - 250px);padding:32px;max-width:1500px}.header{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:24px}.eyebrow{color:var(--accent);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px}.header h1{font-size:30px;margin:5px 0 4px;letter-spacing:-1px}.date{color:var(--muted);font-size:14px}.actions{display:flex;gap:9px}.btn{border:0;border-radius:12px;padding:11px 15px;font-weight:750}.btn.primary{background:var(--accent);color:#fff;box-shadow:0 8px 20px rgba(91,92,226,.22)}.btn.soft{background:var(--surface);color:var(--text);border:1px solid var(--line)}.btn.danger{color:var(--red);background:#fff0f1}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}.stat-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:var(--surface2)}.stat strong{display:block;font-size:28px;margin-top:10px}.stat small{color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(310px,.7fr);gap:18px}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}.panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.panel-title h2{font-size:17px;margin:0}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.toolbar input,.toolbar select{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:10px 11px}.toolbar input{flex:1;min-width:180px}
+.task{display:flex;gap:12px;align-items:center;padding:14px 3px;border-bottom:1px solid var(--line)}.task:last-child{border:0}.task-check{width:20px;height:20px;accent-color:var(--accent);flex:0 0 auto}.task-body{min-width:0;flex:1}.task-title{font-weight:750;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.task.done .task-title{text-decoration:line-through;color:#9ca3af}.task-meta{font-size:12px;color:var(--muted);margin-top:4px}.pill{padding:5px 8px;border-radius:99px;font-size:10px;font-weight:800;white-space:nowrap}.pill.high{background:#ffe8ea;color:#bf3440}.pill.medium{background:#fff3d9;color:#a66a0a}.pill.low{background:#e3f8ef;color:#087451}.row-actions button{border:0;background:transparent;padding:4px;color:var(--muted)}.row-actions button:hover{color:var(--text)}
+.empty{text-align:center;color:var(--muted);padding:35px 10px;font-size:13px}.empty .big{font-size:32px;margin-bottom:8px}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.calendar-head button{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:9px;width:34px;height:34px}.month{font-weight:800}.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.week div{text-align:center;color:var(--muted);font-size:10px;padding:5px}.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.day{min-height:58px;border:1px solid transparent;border-radius:10px;padding:6px;background:var(--surface);position:relative;cursor:pointer}.day:hover{background:var(--surface2)}.day.other{opacity:.35}.day.today{border-color:var(--accent)}.day.selected{background:#eef0ff}.num{font-size:11px;font-weight:750}.marks{margin-top:5px;display:flex;gap:3px;flex-wrap:wrap}.mark{width:5px;height:5px;border-radius:50%;background:var(--accent)}.mark.done{background:var(--green)}.selected{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}.selected h3{font-size:13px;margin:0 0 8px}.mini{font-size:12px;padding:7px 0;border-bottom:1px solid var(--line)}.mini:last-child{border:0}
+.progress-wrap{margin-top:10px}.bar{height:9px;border-radius:99px;background:var(--surface2);overflow:hidden}.bar i{height:100%;display:block;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px}.summary{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px}.summary div{background:var(--surface2);padding:12px;border-radius:12px}.summary b{display:block;font-size:18px}.summary span{font-size:11px;color:var(--muted)}
+.modal{display:none;position:fixed;inset:0;background:rgba(15,17,30,.58);z-index:20;padding:18px;align-items:center;justify-content:center}.modal.open{display:flex}.dialog{width:min(540px,100%);max-height:92vh;overflow:auto;background:var(--surface);border-radius:22px;padding:22px}.dialog-head{display:flex;justify-content:space-between;align-items:center}.dialog h2{margin:0;font-size:20px}.close{border:0;background:transparent;color:var(--muted);font-size:25px}.form{display:grid;gap:12px;margin-top:17px}.field label{display:block;font-size:12px;font-weight:800;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:11px;padding:11px}.field textarea{min-height:90px;resize:vertical}.form-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#171827;color:#fff;padding:11px 15px;border-radius:11px;z-index:40;display:none;font-size:13px;box-shadow:var(--shadow)}.toast.show{display:block}.toast.error{background:#a92835}
+.mobile-nav{display:none}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}}
+@media(max-width:650px){.sidebar{display:none}main{margin:0;width:100%;padding:17px 14px 80px}.header h1{font-size:24px}.actions .soft{display:none}.stats{grid-template-columns:1fr 1fr;gap:9px}.stat{padding:14px}.stat strong{font-size:23px}.layout{gap:12px}.panel{padding:15px}.pill{display:none}.mobile-nav{position:fixed;display:flex;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);z-index:10;justify-content:space-around;padding:8px}.mobile-nav button{border:0;background:transparent;color:var(--muted);font-size:11px}.mobile-nav button:first-child{color:var(--accent);font-weight:800}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo">Campus<b>Flow</b></div>
+  <nav class="nav">
+    <button class="active" onclick="scrollToTop()">⌂ &nbsp; Dashboard</button>
+    <button onclick="focusTasks()">✓ &nbsp; Daftar tugas</button>
+    <button onclick="openTask()">＋ &nbsp; Tambah tugas</button>
+  </nav>
+  <div class="side-note">Semua data disimpan langsung di perangkat ini. Tidak perlu login atau internet untuk mengelola tugas.</div>
+</aside>
+
+<main>
+<header class="header">
+  <div>
+    <div class="eyebrow">Academic planner</div>
+    <h1>Halo! Siap mengatur tugasmu?</h1>
+    <div class="date" id="dateText"></div>
+  </div>
+  <div class="actions">
+    <button class="btn soft" onclick="toggleTheme()">◐ Tema</button>
+    <button class="btn primary" onclick="openTask()">＋ Tugas baru</button>
+  </div>
+</header>
+
+<section class="stats">
+  <div class="stat"><div class="stat-top"><span>Belum selesai</span><span class="stat-icon">📌</span></div><strong id="sOpen">0</strong><small>tugas aktif</small></div>
+  <div class="stat"><div class="stat-top"><span>Hari ini</span><span class="stat-icon">⏰</span></div><strong id="sToday">0</strong><small>deadline hari ini</small></div>
+  <div class="stat"><div class="stat-top"><span>Terlambat</span><span class="stat-icon">⚠️</span></div><strong id="sLate">0</strong><small>perlu perhatian</small></div>
+  <div class="stat"><div class="stat-top"><span>Penyelesaian</span><span class="stat-icon">✓</span></div><strong id="sPct">0%</strong><div class="progress-wrap"><div class="bar"><i id="progress"></i></div></div></div>
+</section>
+
+<div class="layout">
+<section class="panel" id="taskPanel">
+  <div class="panel-title"><h2>Daftar tugas</h2><span class="date" id="countText"></span></div>
+  <div class="toolbar">
+    <input id="search" placeholder="Cari tugas atau mata kuliah…" oninput="renderTasks()">
+    <select id="filter" onchange="renderTasks()"><option value="all">Semua</option><option value="open">Aktif</option><option value="done">Selesai</option><option value="late">Terlambat</option></select>
+    <select id="sort" onchange="renderTasks()"><option value="date">Deadline terdekat</option><option value="priority">Prioritas</option><option value="new">Terbaru</option></select>
+  </div>
+  <div id="tasks"></div>
+</section>
+
+<div>
+<section class="panel">
+  <div class="calendar-head"><button onclick="moveMonth(-1)">‹</button><div class="month" id="month"></div><button onclick="moveMonth(1)">›</button></div>
+  <div class="week"><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div><div>Min</div></div>
+  <div class="cal" id="calendar"></div>
+  <div class="selected" id="selected"></div>
+</section>
+<section class="panel" style="margin-top:14px">
+  <div class="panel-title"><h2>Ringkasan</h2></div>
+  <div class="summary">
+    <div><b id="sumDone">0</b><span>selesai</span></div>
+    <div><b id="sumOpen">0</b><span>aktif</span></div>
+  </div>
+</section>
+</div>
+</div>
+</main>
+
+<nav class="mobile-nav"><button onclick="scrollToTop()">⌂<br>Home</button><button onclick="focusTasks()">✓<br>Tugas</button><button onclick="openTask()">＋<br>Tambah</button></nav>
+
+<div class="modal" id="modal">
+<div class="dialog">
+  <div class="dialog-head"><h2 id="modalTitle">Tambah tugas</h2><button class="close" onclick="closeTask()">×</button></div>
+  <form class="form" id="taskForm">
+    <input type="hidden" id="taskId">
+    <div class="field"><label>Nama tugas *</label><input id="title" required maxlength="120" placeholder="Contoh: Laporan Basis Data"></div>
+    <div class="field"><label>Mata kuliah *</label><input id="course" required maxlength="80" placeholder="Contoh: Basis Data"></div>
+    <div class="field"><label>Deadline *</label><input id="deadline" type="date" required></div>
+    <div class="field"><label>Prioritas</label><select id="priority"><option value="high">Tinggi</option><option value="medium" selected>Sedang</option><option value="low">Rendah</option></select></div>
+    <div class="field"><label>Catatan</label><textarea id="notes" maxlength="500" placeholder="Detail tugas, link, atau catatan…"></textarea></div>
+    <div class="form-actions"><button type="button" class="btn soft" onclick="closeTask()">Batal</button><button class="btn primary" type="submit">Simpan tugas</button></div>
+  </form>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* CampusFlow menggunakan IndexedDB sebagai penyimpanan utama.
+   Ini lebih cocok untuk file HTML lokal daripada bergantung pada localStorage.
+   Jika IndexedDB tidak tersedia, data tetap dikelola selama halaman terbuka. */
+const DB_NAME='CampusFlowDB', DB_VERSION=1, STORE='tasks';
+let db=null, tasks=[], memoryOnly=false;
+let calendarDate=new Date(), selectedDate=todayKey();
+
+const $=id=>document.getElementById(id);
+function todayKey(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function fmt(k){return new Date(k+'T00:00:00').toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
+function late(t){return !t.done && t.deadline<todayKey()}
+function toast(msg,error=false){const t=$('toast');t.textContent=msg;t.className='toast show'+(error?' error':'');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.className='toast',2200)}
+
+function openDB(){
+ return new Promise((resolve,reject)=>{
+  if(!('indexedDB' in window)){reject(new Error('IndexedDB tidak tersedia'));return}
+  const req=indexedDB.open(DB_NAME,DB_VERSION);
+  req.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id'})};
+  req.onsuccess=e=>{db=e.target.result;resolve(db)};
+  req.onerror=()=>reject(req.error||new Error('Database gagal dibuka'));
+ })
+}
+function readAll(){
+ if(!db)return Promise.resolve(tasks);
+ return new Promise((resolve,reject)=>{
+  const r=db.transaction(STORE,'readonly').objectStore(STORE).getAll();
+  r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error)
+ })
+}
+function putTask(t){
+ if(memoryOnly||!db){const i=tasks.findIndex(x=>x.id===t.id);if(i>=0)tasks[i]=t;else tasks.push(t);return Promise.resolve()}
+ return new Promise((resolve,reject)=>{
+  const r=db.transaction(STORE,'readwrite').objectStore(STORE).put(t);
+  r.onsuccess=()=>resolve();r.onerror=()=>reject(r.error)
+ })
+}
+function deleteFromDB(id){
+ if(memoryOnly||!db){tasks=tasks.filter(t=>t.id!==id);return Promise.resolve()}
+ return new Promise((resolve,reject)=>{
+  const r=db.transaction(STORE,'readwrite').objectStore(STORE).delete(id);
+  r.onsuccess=()=>resolve();r.onerror=()=>reject(r.error)
+ })
+}
+async function init(){
+ try{await openDB();tasks=await readAll();memoryOnly=false}
+ catch(e){memoryOnly=true;tasks=[];toast('Mode sementara aktif: browser tidak menyediakan penyimpanan.',true)}
+ renderAll();
+}
+async function saveTask(e){
+ e.preventDefault();
+ const title=$('title').value.trim(),course=$('course').value.trim(),deadline=$('deadline').value;
+ if(!title||!course||!deadline){toast('Mohon lengkapi kolom bertanda *',true);return}
+ const existing=$('taskId').value?tasks.find(t=>t.id===$('taskId').value):null;
+ const task={id:existing?existing.id:cryptoId(),title,course,deadline,priority:$('priority').value,notes:$('notes').value.trim(),done:existing?existing.done:false,createdAt:existing?existing.createdAt:Date.now()};
+ try{
+  await putTask(task);
+  if(!memoryOnly)tasks=await readAll();
+  else{const i=tasks.findIndex(x=>x.id===task.id);if(i>=0)tasks[i]=task;else tasks.push(task)}
+  closeTask();selectedDate=deadline;renderAll();toast(existing?'Tugas diperbarui ✓':'Tugas berhasil ditambahkan ✓');
+ }catch(err){toast('Gagal menyimpan tugas. Coba lagi.',true)}
+}
+function cryptoId(){return (crypto&&crypto.randomUUID)?crypto.randomUUID():Date.now()+'-'+Math.random().toString(36).slice(2)}
+function openTask(task=null){
+ $('modal').classList.add('open');$('modalTitle').textContent=task?'Edit tugas':'Tambah tugas';
+ $('taskId').value=task?.id||'';$('title').value=task?.title||'';$('course').value=task?.course||'';$('deadline').value=task?.deadline||todayKey();$('priority').value=task?.priority||'medium';$('notes').value=task?.notes||'';
+ setTimeout(()=>$('title').focus(),50)
+}
+function closeTask(){$('modal').classList.remove('open')}
+async function toggle(id){
+ const t=tasks.find(x=>x.id===id);if(!t)return;t.done=!t.done;
+ try{await putTask(t);if(!memoryOnly)tasks=await readAll();renderAll();toast(t.done?'Tugas selesai 🎉':'Tugas dikembalikan')}
+ catch(e){t.done=!t.done;toast('Tidak dapat menyimpan perubahan.',true)}
+}
+async function removeTask(id){
+ if(!confirm('Hapus tugas ini?'))return;
+ try{await deleteFromDB(id);if(!memoryOnly)tasks=await readAll();renderAll();toast('Tugas dihapus')}
+ catch(e){toast('Tidak dapat menghapus tugas.',true)}
+}
+function edit(id){const t=tasks.find(x=>x.id===id);if(t)openTask(t)}
+function renderTasks(){
+ const q=$('search').value.toLowerCase(),f=$('filter').value,s=$('sort').value;
+ let list=tasks.filter(t=>{
+  const match=(t.title+' '+t.course+' '+(t.notes||'')).toLowerCase().includes(q);
+  const stat=f==='all'||(f==='open'&&!t.done)||(f==='done'&&t.done)||(f==='late'&&late(t));
+  return match&&stat
+ });
+ if(s==='date')list.sort((a,b)=>a.deadline.localeCompare(b.deadline)||Number(a.done)-Number(b.done));
+ if(s==='priority'){const p={high:0,medium:1,low:2};list.sort((a,b)=>p[a.priority]-p[b.priority])}
+ if(s==='new')list.sort((a,b)=>b.createdAt-a.createdAt);
+ $('countText').textContent=list.length+' tugas';
+ $('tasks').innerHTML=list.length?list.map(t=>`
+ <div class="task ${t.done?'done':''}">
+  <input class="task-check" type="checkbox" ${t.done?'checked':''} onchange="toggle('${t.id}')">
+  <div class="task-body"><div class="task-title">${esc(t.title)}</div><div class="task-meta">${esc(t.course)} · ${fmt(t.deadline)} ${late(t)?'· ⚠ terlambat':''}</div></div>
+  <span class="pill ${t.priority}">${t.priority==='high'?'Tinggi':t.priority==='medium'?'Sedang':'Rendah'}</span>
+  <div class="row-actions"><button onclick="edit('${t.id}')" title="Edit">✎</button><button onclick="removeTask('${t.id}')" title="Hapus">×</button></div>
+ </div>`).join(''):`<div class="empty"><div class="big">🗂️</div>Belum ada tugas di sini.<br>Tambahkan tugas pertamamu dengan tombol <b>+ Tugas baru</b>.</div>`
+}
+function renderStats(){
+ const open=tasks.filter(t=>!t.done),done=tasks.filter(t=>t.done),lateN=open.filter(late).length,total=tasks.length,pct=total?Math.round(done.length/total*100):0;
+ $('sOpen').textContent=open.length;$('sToday').textContent=open.filter(t=>t.deadline===todayKey()).length;$('sLate').textContent=lateN;$('sPct').textContent=pct+'%';$('progress').style.width=pct+'%';$('sumDone').textContent=done.length;$('sumOpen').textContent=open.length
+}
+function renderCalendar(){
+ const y=calendarDate.getFullYear(),m=calendarDate.getMonth(),first=new Date(y,m,1),start=(first.getDay()||7)-1,days=new Date(y,m+1,0).getDate();
+ $('month').textContent=calendarDate.toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+ let out='';
+ for(let i=0;i<42;i++){
+  const n=i-start+1, dt=new Date(y,m,n),key=todayKey(dt),other=dt.getMonth()!==m, ts=tasks.filter(t=>t.deadline===key);
+  out+=`<button class="day ${other?'other ':''}${key===todayKey()?'today ':''}${key===selectedDate?'selected':''}" onclick="selectDay('${key}')"><div class="num">${dt.getDate()}</div><div class="marks">${ts.slice(0,5).map(t=>`<i class="mark ${t.done?'done':''}"></i>`).join('')}</div></button>`
+ }
+ $('calendar').innerHTML=out;renderSelected()
+}
+function renderSelected(){
+ const ts=tasks.filter(t=>t.deadline===selectedDate).sort((a,b)=>Number(a.done)-Number(b.done));
+ $('selected').innerHTML=`<h3>${fmt(selectedDate)}</h3>`+(ts.length?ts.map(t=>`<div class="mini">${t.done?'✓':'○'} ${esc(t.title)} <span class="date">· ${esc(t.course)}</span></div>`).join(''):'<div class="date">Tidak ada tugas pada tanggal ini.</div>')
+}
+function selectDay(k){selectedDate=k;renderCalendar()}
+function moveMonth(n){calendarDate.setMonth(calendarDate.getMonth()+n);renderCalendar()}
+function renderAll(){renderStats();renderTasks();renderCalendar()}
+function focusTasks(){$('taskPanel').scrollIntoView({behavior:'smooth',block:'start'})}
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+function toggleTheme(){document.body.classList.toggle('dark');try{localStorage.setItem('campusflow_theme',document.body.classList.contains('dark')?'dark':'light')}catch(e){}}
+try{if(localStorage.getItem('campusflow_theme')==='dark')document.body.classList.add('dark')}catch(e){}
+$('dateText').textContent=new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+$('taskForm').addEventListener('submit',saveTask);
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeTask()});
+init();
+</script>
+</body>
+</html>
